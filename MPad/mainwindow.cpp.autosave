@@ -40,15 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
     vbox->addStretch();
     State_widget->widget()->setLayout(vbox);
 
-
-//    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","10:00  -  11:00");
-//    MDetail* mdetail1 = new MDetail("Korol","德玛西亚","即将开始","10:00  -  11:00");
-
-//    int count = vbox->count();
-//    vbox->insertWidget(--count,mdetail1);
-//    vbox->insertWidget(1,mdetail);
-
-
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::updateTimeLabel);
     timer->start(1000);

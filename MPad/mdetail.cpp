@@ -8,9 +8,9 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
       this->metting_name = mettName;
       this->metting_state = mettState;
       this->metting_time = mettTime;
+      this->resize(180,80);
 
-      //this->setStyleSheet("background-color:rgb(63, 147, 168);color:white;border-radius:15px;");///media/root/F8FE9A09FE99BFF4/back.png
-      this->setStyleSheet("border-image:url(:/image/Image/back.png);border-radius:25px;");
+      m_dockwidget->setStyleSheet("border-image:url(:/image/Image/back.png);border-radius:15px;");
       QFont font("微软雅黑",12);
 
       QHBoxLayout *hbox1 = new QHBoxLayout();
@@ -40,14 +40,16 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
       mettTimeLabel->setAlignment(Qt::AlignCenter);
       mettTimeLabel->setFont(QFont("宋体",11));
       mettTimeLabel->setStyleSheet("border-image:url();background-color: transparent;");
-
       hbox3->addWidget(mettTimeLabel);
 
-      QVBoxLayout* vbox = new QVBoxLayout();
+      QVBoxLayout* vbox = new QVBoxLayout(m_dockwidget);
       vbox->addLayout(hbox1);
       vbox->addLayout(hbox2);
       vbox->addLayout(hbox3);
       m_dockwidget->setLayout(vbox);
+      QHBoxLayout *main_box = new QHBoxLayout(this);
+      main_box->addWidget(m_dockwidget);
+      this->setLayout(main_box);
 
 }
 

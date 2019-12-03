@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,10 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    mdetail.cpp
+    mdetail.cpp \
+    mettingfrom.cpp
 
 HEADERS  += mainwindow.h \
-    mdetail.h
+    mdetail.h \
+    mettingfrom.h \
+    myconfig.h
 
 FORMS    += mainwindow.ui
 

@@ -2,5 +2,6 @@
     <qresource prefix="/image">
         <file>Image/back.png</file>
         <file>Image/infobackimage.png</file>
+        <file>Image/log.png</file>
     </qresource>
 </RCC>
