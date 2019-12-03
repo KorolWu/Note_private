@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->resize(PAD_X,PAD_Y);
+    getParameter();
     State_widget = new QScrollArea(this);
     QWidget* widget_containt = new QWidget();
     widget_containt->resize(160,PAD_Y);
@@ -21,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     Info_widget->setStyleSheet("border-image:url(:/image/Image/infobackimage.png);border-radius:15px;");
     Info_widget->move(204,0);
     QLabel *mettName = new QLabel(Info_widget);
-    mettName->setText("光明顶");
+    mettName->setText(m_metting_room);
     mettName->setFont(QFont("宋体",38));
     mettName->setStyleSheet("border-image:url();");
-    mettName->move(150,120);
+    mettName->move(160,120);
     time_d_label = new QLabel(Info_widget);
     time_d_label->setFont(QFont("微软雅黑",20));
     time_d_label->setStyleSheet("border-image:url();");
@@ -40,20 +41,32 @@ MainWindow::MainWindow(QWidget *parent) :
     vbox->addStretch();
     State_widget->widget()->setLayout(vbox);
 
-
-//    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","10:00  -  11:00");
-//    MDetail* mdetail1 = new MDetail("Korol","德玛西亚","即将开始","10:00  -  11:00");
-
-//    int count = vbox->count();
-//    vbox->insertWidget(--count,mdetail1);
-//    vbox->insertWidget(1,mdetail);
-
-
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::updateTimeLabel);
     timer->start(1000);
 
-    getParameter();
+
+    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","10:00-11:00");
+    connect(mdetail,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+    mdetail1 = new MDetail("Korol","德玛西亚","即将开始","19:16-19:17");
+    connect(mdetail1,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+    int count = vbox->count();
+    qDebug()<<"count"<<count;
+    vbox->insertWidget(--count,mdetail1);
+    count = vbox->count();
+    vbox->insertWidget(--count,mdetail);
+     count = vbox->count();
+     mdetail2 = new MDetail("Korol","德玛西亚","即将开始","10:00-11:00");
+     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+     vbox->insertWidget(--count,mdetail2);
+
+     mdetail3 = new MDetail("Korol","德玛西亚","即将开始","16:00-17:00");
+     connect(mdetail3,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+     vbox->insertWidget(--count,mdetail3);
+     mdetail4 = new MDetail("Korol","德玛西亚","即将开始","15:00-16:00");
+     connect(mdetail4,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+     vbox->insertWidget(--count,mdetail4);
+
     connectToServer();
 }
 
@@ -111,4 +124,18 @@ void MainWindow::webSocketDisconnect()
 void MainWindow::sendWebsocketMessage()
 {
     m_webSocket.sendTextMessage(m_metting_room);
+}
+
+void MainWindow::this_show()
+{
+    this->show();
+}
+
+void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, QDateTime date_time_end)
+{
+    MettingFrom* metting = new MettingFrom(appoinment_name,metting_name,date_time_end);
+    connect(metting,&MettingFrom::weakup_mainwindow,this,&MainWindow::this_show);
+    metting->show();
+    this->hide();
+
 }

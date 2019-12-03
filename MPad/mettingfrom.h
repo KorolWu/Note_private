@@ -8,15 +8,16 @@
 #include <QFont>
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <QTimer>
 
 class MettingFrom : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MettingFrom(QString appoinment_name,QString topic_name,QWidget *parent = 0);
+    explicit MettingFrom(QString appoinment_name,QString topic_name,QDateTime end_time,QWidget *parent = 0);
 
 signals:
-
+    void weakup_mainwindow();
 public slots:
 private:
     const int PAD_X = 640;
@@ -28,6 +29,10 @@ private:
 
     QLabel* time_d_label;
     QLabel* time_s_label;
+    QDateTime m_end_time;
+    //QTimer* timer;
+    uint m_end;
+    void weakupMainwindow();
     void update_time();
 };
 

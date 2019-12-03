@@ -1,9 +1,10 @@
 #include "mettingfrom.h"
 
-MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QWidget *parent) : QWidget(parent)
+MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime end_time, QWidget *parent) : QWidget(parent)
 {
+    m_end_time = end_time;
     this->resize(PAD_X,PAD_Y);
-     this->setStyleSheet("background-color:rgb(233, 233, 233);");
+    this->setStyleSheet("background-color:rgb(233, 233, 233);");
     log_lab = new QLabel(this);
     //log_lab->resize(60,30);
     QPixmap pixmap(":/image/Image/log.png");
@@ -47,6 +48,18 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QWidget *p
     connect(timer,&QTimer::timeout,this,&MettingFrom::update_time);
     timer->start(1000);
 
+    //weak mainwindow
+//    timer = new QTimer(this);
+//    connect(timer,&QTimer::timeout,this,&MettingFrom::weakupMainwindow);
+//    timer->start(1000);
+    m_end = m_end_time.toTime_t();
+
+}
+
+void MettingFrom::weakupMainwindow()
+{
+
+
 }
 
 void MettingFrom::update_time()
@@ -55,4 +68,10 @@ void MettingFrom::update_time()
     QStringList list = str.split(" ");
     time_d_label->setText(list[0]);
     time_s_label->setText(list[1]);
+    uint now = QDateTime::currentDateTime().toTime_t();
+    if(now >= m_end)
+    {
+        weakup_mainwindow();
+        this->hide();
+    }
 }

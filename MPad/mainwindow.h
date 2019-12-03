@@ -43,6 +43,14 @@ private:
     QString m_url;
     QString m_metting_room;
     bool is_alive = false;
+
+    //test
+    MDetail* mdetail ;
+    MDetail* mdetail1 ;
+    MDetail* mdetail2 ;
+    MDetail* mdetail3 ;
+    MDetail* mdetail4 ;
+    //test
 private:
     void updateTimeLabel();
     void getParameter();
@@ -51,6 +59,8 @@ private:
     void onTextMessageReceived(QString message);
     void webSocketDisconnect();
     void sendWebsocketMessage();
+    void this_show();
+    void showMettingFrom(QString appoinment_name,QString metting_name,QDateTime date_time_end);
 public:
     QVBoxLayout* vbox;
 };
