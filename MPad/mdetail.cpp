@@ -53,7 +53,7 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
 
       timer = new QTimer(this);
       connect(timer,&QTimer::timeout,this,&MDetail::check_status);
-      timer->start(2000);
+      timer->start(500);
 
 }
 
@@ -75,15 +75,21 @@ void MDetail::check_status()
            uint stime = start.toTime_t();
            uint etime = end.toTime_t();
            uint ntime = QDateTime::currentDateTime().toTime_t();
-          // qDebug()<<"stime"<<start<<"end"<<end<<"now"<<QDateTime::currentDateTime();
-           if(ntime - stime <= 6000)
+           //qDebug()<<"stime"<<start<<"end"<<end<<"now"<<QDateTime::currentDateTime();
+           qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
+           qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
+           qDebug()<<metting_name<<ntime - stime;
+           if((stime > ntime)||(etime >ntime))
            {
-               state_label->setText("进行中");
-               state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
-               if(star_signal)
+               if((stime - ntime  <= 2)||(etime-ntime >= 5))//uint befor or going
                {
-                   emit start_signal(appoinment_name,metting_name,end);
-                   star_signal = false;
+                   state_label->setText("进行中");
+                   state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
+                   if(star_signal)
+                   {
+                       emit start_signal(appoinment_name,metting_name,end);
+                       star_signal = false;
+                   }
                }
            }
            if(ntime > etime)

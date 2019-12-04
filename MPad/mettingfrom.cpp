@@ -4,6 +4,7 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
 {
     m_end_time = end_time;
     this->resize(PAD_X,PAD_Y);
+    this->move(700,300);
     this->setStyleSheet("background-color:rgb(233, 233, 233);");
     log_lab = new QLabel(this);
     //log_lab->resize(60,30);
@@ -73,5 +74,6 @@ void MettingFrom::update_time()
     {
         weakup_mainwindow();
         this->hide();
+        //this->close();//------------
     }
 }

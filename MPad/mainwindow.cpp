@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->resize(PAD_X,PAD_Y);
+    this->move(700,300);
     getParameter();
     State_widget = new QScrollArea(this);
     QWidget* widget_containt = new QWidget();
@@ -15,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     State_widget->setWidgetResizable(true);
     State_widget->resize(200,PAD_Y);
     State_widget->setWindowOpacity(0.5);
-    State_widget->setStyleSheet("background-color:rgb(213, 213, 213);border-radius:15px;");
+    State_widget->setStyleSheet("background-color:rgb(153, 153, 153);border-radius:15px;");//213, 213, 213
 
     Info_widget = new QWidget(this);
     Info_widget->resize(PAD_X-204,PAD_Y);
@@ -46,24 +47,24 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(1000);
 
 
-    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","10:00-11:00");
+    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","08:50-08:51");
     connect(mdetail,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-    mdetail1 = new MDetail("Korol","德玛西亚","即将开始","19:16-19:17");
-    connect(mdetail1,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+//    mdetail1 = new MDetail("Korol","德玛西亚","即将开始","09:07-09:08");
+//    connect(mdetail1,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
     int count = vbox->count();
     qDebug()<<"count"<<count;
-    vbox->insertWidget(--count,mdetail1);
+    //vbox->insertWidget(--count,mdetail1);
     count = vbox->count();
     vbox->insertWidget(--count,mdetail);
      count = vbox->count();
-     mdetail2 = new MDetail("Korol","德玛西亚","即将开始","10:00-11:00");
-     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-     vbox->insertWidget(--count,mdetail2);
+//     mdetail2 = new MDetail("Korol","比尔吉沃特","即将开始","09:09-09:10");
+//     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+//     vbox->insertWidget(--count,mdetail2);
 
-     mdetail3 = new MDetail("Korol","德玛西亚","即将开始","16:00-17:00");
+     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","15:12-15:13");
      connect(mdetail3,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail3);
-     mdetail4 = new MDetail("Korol","德玛西亚","即将开始","15:00-16:00");
+     mdetail4 = new MDetail("Korol","教育专区","即将开始","15:30-16:00");
      connect(mdetail4,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail4);
 
@@ -135,7 +136,7 @@ void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, 
 {
     MettingFrom* metting = new MettingFrom(appoinment_name,metting_name,date_time_end);
     connect(metting,&MettingFrom::weakup_mainwindow,this,&MainWindow::this_show);
-    metting->show();
     this->hide();
+    metting->show();
 
 }
