@@ -27,12 +27,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     mdetail.cpp \
-    mettingfrom.cpp
+    mettingfrom.cpp \
+    jeson2object.cpp
 
 HEADERS  += mainwindow.h \
     mdetail.h \
     mettingfrom.h \
-    myconfig.h
+    myconfig.h \
+    jeson2object.h
 
 FORMS    += mainwindow.ui
 

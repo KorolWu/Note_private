@@ -5,6 +5,7 @@
 #include <mdetail.h>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QTimer>
 #include <QDateTime>
 #include <QDebug>
@@ -63,6 +64,7 @@ private:
     void sendWebsocketMessage();
     void this_show();
     void showMettingFrom(QString appoinment_name,QString metting_name,QDateTime date_time_end);
+    void btn_test();
 public:
     QVBoxLayout* vbox;
 };

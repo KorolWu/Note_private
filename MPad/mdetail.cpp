@@ -76,9 +76,9 @@ void MDetail::check_status()
            uint etime = end.toTime_t();
            uint ntime = QDateTime::currentDateTime().toTime_t();
            //qDebug()<<"stime"<<start<<"end"<<end<<"now"<<QDateTime::currentDateTime();
-           qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
-           qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
-           qDebug()<<metting_name<<ntime - stime;
+//           qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
+//           qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
+//           qDebug()<<metting_name<<ntime - stime;
            if((stime > ntime)||(etime > ntime))
            {
                if((stime - ntime  <= 2)||((stime < ntime)&&(etime>ntime)))//uint befor or going

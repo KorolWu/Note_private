@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     State_widget->setWidgetResizable(true);
     State_widget->resize(200,PAD_Y);
     State_widget->setWindowOpacity(0.5);
-    State_widget->setStyleSheet("background-color:rgb(153, 153, 153);border-radius:15px;");//213, 213, 213
+    State_widget->setStyleSheet("background-color:rgb(213, 213, 213);border-radius:15px;");//213, 213, 213,153, 153, 153
 
     Info_widget = new QWidget(this);
     Info_widget->resize(PAD_X-204,PAD_Y);
@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
     time_s_label->setStyleSheet("border-image:url();");
     time_s_label->move(160,240);
     time_s_label->resize(200,50);
+    QPushButton* btn = new QPushButton(Info_widget);
+    btn->move(160,300);
+    btn->setText("Test");
+    connect(btn,&QPushButton::clicked,this,&MainWindow::btn_test);
 
     vbox = new QVBoxLayout();
     vbox->addStretch();
@@ -113,11 +117,32 @@ void MainWindow::onConnected()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
+    //clear vbox widget
+    QLayoutItem *child;
+    qDebug()<<vbox<<"vboxLayout";
+    while((child = vbox->takeAt(0)) != 0)
+    {
+        if(child->widget())
+        {
+            child->widget()->setParent(NULL);
+            delete child;
+        }
+        qDebug()<<child;
+
+    }
+
+    // delete vbox;
+//    QList<QWidget*> widget_list = vbox->findChildren<QWidget*>();
+//      qDebug()<<"vbox Count"<<vbox->count();
+//    foreach (QWidget* w, widget_list) {
+//        delete w;
+//    }
+
     //1 new medetail object
     QString start_str = "";
     QDateTime start_time =  QDateTime::fromString(start_str, "yyyy-MM-dd hh:mm:ss");
     uint start_int = start_time.toTime_t();
-    MDetail* detail = new MDetail("","","","");
+    MDetail* detail = new MDetail(""," 空闲中 ","","");
     m_detail_map.insert(start_int,detail);
 
     //make detailMap key bluesocer
@@ -139,16 +164,21 @@ void MainWindow::onTextMessageReceived(QString message)
             }
         }
     }
+
     //2 index show
     for(int index =0;index <key_vec.size();index++)
     {
+        vbox->addStretch();
         uint key = key_vec[index];
         int dex = vbox->count();
+        //qDebug()<<"vbox Count"<<dex<<"path Vbox "<<vbox;
         vbox->insertWidget(--dex,m_detail_map[key]);
     }
     //3 time clear
 
-    qDebug()<<message;
+//    qDebug()<<message;
+     /**
+    **/
 }
 
 void MainWindow::webSocketDisconnect()
@@ -173,4 +203,9 @@ void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, 
     this->hide();
     metting->show();
 
+}
+
+void MainWindow::btn_test()
+{
+    onTextMessageReceived("---");
 }
