@@ -43,6 +43,8 @@ private:
     QString m_url;
     QString m_metting_room;
     bool is_alive = false;
+    //save detail object and start_time
+    QMap<uint, MDetail*> m_detail_map;
 
     //test
     MDetail* mdetail ;

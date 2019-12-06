@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include <QVector>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -61,10 +61,10 @@ MainWindow::MainWindow(QWidget *parent) :
 //     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
 //     vbox->insertWidget(--count,mdetail2);
 
-     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","15:12-15:13");
+     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","16:00-16:11");
      connect(mdetail3,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail3);
-     mdetail4 = new MDetail("Korol","教育专区","即将开始","15:30-16:00");
+     mdetail4 = new MDetail("Korol","教育专区","即将开始","16:19-16:21");
      connect(mdetail4,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail4);
 
@@ -113,7 +113,41 @@ void MainWindow::onConnected()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
-    //new medetail object
+    //1 new medetail object
+    QString start_str = "";
+    QDateTime start_time =  QDateTime::fromString(start_str, "yyyy-MM-dd hh:mm:ss");
+    uint start_int = start_time.toTime_t();
+    MDetail* detail = new MDetail("","","","");
+    m_detail_map.insert(start_int,detail);
+
+    //make detailMap key bluesocer
+    QVector<uint> key_vec;
+    for(auto it = m_detail_map.begin();it != m_detail_map.end();it++)
+    {
+        key_vec.append(it.key());
+    }
+
+    for(int i = 0;i < key_vec.size();i++)
+    {
+        for(int j = 0;j < key_vec.size()-1-i; j++)
+        {
+            if(key_vec[j]>key_vec[j+1])
+            {
+                uint temp = key_vec[j];
+                key_vec[j] = key_vec[j+1];
+                key_vec[j+1] = temp;
+            }
+        }
+    }
+    //2 index show
+    for(int index =0;index <key_vec.size();index++)
+    {
+        uint key = key_vec[index];
+        int dex = vbox->count();
+        vbox->insertWidget(--dex,m_detail_map[key]);
+    }
+    //3 time clear
+
     qDebug()<<message;
 }
 

@@ -79,9 +79,9 @@ void MDetail::check_status()
            qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
            qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
            qDebug()<<metting_name<<ntime - stime;
-           if((stime > ntime)||(etime >ntime))
+           if((stime > ntime)||(etime > ntime))
            {
-               if((stime - ntime  <= 2)||(etime-ntime >= 5))//uint befor or going
+               if((stime - ntime  <= 2)||((stime < ntime)&&(etime>ntime)))//uint befor or going
                {
                    state_label->setText("进行中");
                    state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
