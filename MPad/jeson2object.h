@@ -18,6 +18,8 @@ public:
     QList<QString> m_iList;
     QList<QString> m_vList;
 
+    QMap<uint, MDetail *> m_Object_map;
+
 };
 
 #endif // JESON2OBJECT_H

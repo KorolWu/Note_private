@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QVector>
 #include <jeson2object.h>
+#include <QVariantHash>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(1000);
 
 
-    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","08:50-08:51");
+    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","08:50-08:51","");
     connect(mdetail,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
 //    mdetail1 = new MDetail("Korol","德玛西亚","即将开始","09:07-09:08");
 //    connect(mdetail1,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
@@ -66,10 +67,10 @@ MainWindow::MainWindow(QWidget *parent) :
 //     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
 //     vbox->insertWidget(--count,mdetail2);
 
-     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","16:00-16:11");
+     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","16:00-16:11","");
      connect(mdetail3,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail3);
-     mdetail4 = new MDetail("Korol","教育专区","即将开始","16:19-16:21");
+     mdetail4 = new MDetail("Korol","教育专区","即将开始","16:19-16:21","");
      connect(mdetail4,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
      vbox->insertWidget(--count,mdetail4);
 
@@ -121,9 +122,10 @@ void MainWindow::onConnected()
 
 void MainWindow::onTextMessageReceived(QString message)
 {
+    m_detail_map.clear();
+     Jeson2Object j(message,m_detail_map);
     //clear vbox widget
     QLayoutItem *child;
-    qDebug()<<vbox<<"vboxLayout";
     while((child = vbox->takeAt(0)) != 0)
     {
         if(child->widget())
@@ -134,25 +136,22 @@ void MainWindow::onTextMessageReceived(QString message)
         qDebug()<<child;
 
     }
-
-    // delete vbox;
-//    QList<QWidget*> widget_list = vbox->findChildren<QWidget*>();
-//      qDebug()<<"vbox Count"<<vbox->count();
-//    foreach (QWidget* w, widget_list) {
-//        delete w;
-//    }
-
     //1 new medetail object
-    QString start_str = "";
-    QDateTime start_time =  QDateTime::fromString(start_str, "yyyy-MM-dd hh:mm:ss");
-    uint start_int = start_time.toTime_t();
-    MDetail* detail = new MDetail(""," 空闲中 ","","");
-    m_detail_map.insert(start_int,detail);
+    if(m_detail_map.size() == 0)
+    {
+        QString start_str = "";
+        QDateTime start_time =  QDateTime::fromString(start_str, "yyyy-MM-dd hh:mm:ss");
+        uint start_int = start_time.toTime_t();
+        MDetail* detail = new MDetail(""," 空闲中 ","","","");
+        m_detail_map.insert(start_int,detail);
+        return;
+    }
 
     //make detailMap key bluesocer
     QVector<uint> key_vec;
     for(auto it = m_detail_map.begin();it != m_detail_map.end();it++)
     {
+        connect(it.value(),&MDetail::start_signal,this,&MainWindow::showMettingFrom);
         key_vec.append(it.key());
     }
 
@@ -209,15 +208,40 @@ void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, 
 
 }
 
+QString MainWindow::createJsonStr()
+{
+    QVariantHash data;
+    QJsonArray array1;
+    array1.insert(0, m_metting_room);
+    data.insert("Office_Reservation_search",array1);
+    QJsonObject rootObj = QJsonObject::fromVariantHash(data);
+    QJsonDocument document;
+    document.setObject(rootObj);
+
+    QByteArray byte_array = document.toJson(QJsonDocument::Compact);
+    QString json_str(byte_array);
+    qDebug()<<json_str;
+    return json_str;
+
+}
+
 void MainWindow::btn_test()
 {
-    onTextMessageReceived("---");
+    QString str ="{\"code\":0,\"msg\":\"查找完成\",\"data\":{\"terminal1\":[{\"OrderNum\":\"191011090412104\",\"WorkerNumber\":\"CWA666\","
+                 "\"StartTime\":\"2019-12-07 16:50:00\",\"EndTime\":\"2019-12-07 16:51:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA732\","
+                                                      "\"StartTime\":\"2019-12-07 16:52:00\",\"EndTime\":\"2019-12-07 16:53:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA02\","
+                 "\"StartTime\":\"2019-12-07 16:48:00\",\"EndTime\":\"2019-12-07 16:49:00\"}]}}";
+    onTextMessageReceived(str);
+
+    createJsonStr();
 }
 
 void MainWindow::test_json()
 {
-    Jeson2Object j;
-    //QString str =""
 
-    j.parseJsonFile("{ \"sites\": [ { \"name\":\"cainiao\" , \"url\":\"www.runoob.com\" }, {\"name\":\"google\" , \"url\":\"www.google.com \"}]}");
+//    QString str ="{\"code\":0,\"msg\":\"查找完成\",\"data\":{\"terminal1\":[{\"OrderNum\":\"191011090412104\",\"WorkerNumber\":\"CWA732\","
+//                 "\"StartTime\":\"2019-10-24 11:12:00\",\"EndTime\":\"2019-10-24 11:14:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA732\","
+//                                                      "\"StartTime\":\"2019-10-24 11:19:00\",\"EndTime\":\"2019-10-24 11:14:00\"}]}}";
+//    Jeson2Object j(str,m_detail_map);
+    qDebug()<<m_detail_map;
 }

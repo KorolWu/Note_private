@@ -31,7 +31,7 @@ private:
     QLabel* time_s_label;
     QDateTime m_end_time;
     //QTimer* timer;
-    uint m_end;
+    uint m_end = 0;
     void weakupMainwindow();
     void update_time();
 };

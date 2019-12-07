@@ -1,5 +1,5 @@
 #include "mettingfrom.h"
-
+#include <QDebug>
 MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime end_time, QWidget *parent) : QWidget(parent)
 {
     m_end_time = end_time;
@@ -48,12 +48,8 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MettingFrom::update_time);
     timer->start(1000);
-
-    //weak mainwindow
-//    timer = new QTimer(this);
-//    connect(timer,&QTimer::timeout,this,&MettingFrom::weakupMainwindow);
-//    timer->start(1000);
     m_end = m_end_time.toTime_t();
+    qDebug()<<"new mettingFrom "<<"end time "<<end_time<<"m_end_int"<<m_end<< "now_int"<<QDateTime::currentDateTime().toTime_t();;
 
 }
 
@@ -73,7 +69,8 @@ void MettingFrom::update_time()
     if(now >= m_end)
     {
         weakup_mainwindow();
-        this->hide();
-        //this->close();//------------
+        //this->hide();
+        this->close();
+        this->deleteLater();
     }
 }

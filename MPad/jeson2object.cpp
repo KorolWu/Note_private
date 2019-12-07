@@ -7,21 +7,17 @@ Jeson2Object::Jeson2Object()
 
 Jeson2Object::Jeson2Object(QString str,QMap<uint, MDetail *> &map)
 {
-    QByteArray buf = str.toUtf8();
-    QJsonDocument jd = QJsonDocument::fromJson(buf);
-    if(jd.isObject())
-    {
-        QJsonObject jo = jd.object();
-    }
+   parseJsonFile(str);
+   map = m_Object_map;
 }
 void Jeson2Object::initList() {
     m_iList << "I1" << "I2" << "I3" << "I4" << "I5";
 
 }
-void Jeson2Object::parseJsonFile(const QString &fileName)
+void Jeson2Object::parseJsonFile(const QString &json_str)
 {
      m_vList << "name" << "url";
-    QByteArray buf = fileName.toLatin1();
+    QByteArray buf = json_str.toLatin1();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buf, &jsonParseError));
     if(QJsonParseError::NoError != jsonParseError.error)
@@ -30,12 +26,19 @@ void Jeson2Object::parseJsonFile(const QString &fileName)
         return;
     }
     QJsonObject rootObject = jsonDocument.object();
-    if(!rootObject.keys().contains("sites"))
+    if(!rootObject.keys().contains("data"))
     {
         qDebug() << "No target value";
         return;
     }
-    QJsonValue jsonValue = rootObject.value("sites");
+    QJsonValue jsonValue = rootObject.value("data");
+    QJsonObject obj = jsonValue.toObject();
+    if(!obj.keys().contains("terminal1"))//variable
+    {
+        qDebug() << "No target value -- terminal1";
+        return;
+    }
+    jsonValue = obj.value("terminal1");
     if(!jsonValue.isArray())
     {
         qDebug() << "No target array";
@@ -48,14 +51,26 @@ void Jeson2Object::parseJsonFile(const QString &fileName)
 }
 void Jeson2Object::parseJsonObject(QJsonArray::const_iterator iter) {
     QJsonObject jsonObject = (*iter).toObject();
-    if(jsonObject.keys().contains("name"))
+    QString name = "";
+    //QString mettState ="";
+    QString mettTime_e = "";
+    QString mettTime_s ="";
+    if(jsonObject.keys().contains("WorkerNumber"))
     {
-        qDebug()<<"budeliaol----"<<jsonObject.value("name").toString();
+        name = jsonObject.value("WorkerNumber").toString();
     }
-    if(jsonObject.keys().contains("url"))
+    if(jsonObject.keys().contains("StartTime"))
     {
-        qDebug()<<"budeliaol----"<<jsonObject.value("url").toString();
+        mettTime_s = jsonObject.value("StartTime").toString();
     }
+    if(jsonObject.keys().contains("EndTime"))
+    {
+       mettTime_e = jsonObject.value("EndTime").toString();
+    }
+    QDateTime start_time = QDateTime::fromString(mettTime_s, "yyyy-MM-dd hh:mm:ss");
+    uint int_start_time = start_time.toTime_t();
+    MDetail *ob = new MDetail(name,"Project Analysis","",mettTime_s,mettTime_e);
+    m_Object_map.insert(int_start_time,ob);
 
 }
 void Jeson2Object::parseJsonObjectI(QJsonObject &object)

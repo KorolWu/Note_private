@@ -1,13 +1,14 @@
 #include "mdetail.h"
 
-MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTime,QWidget *parent) : QWidget(parent)
+MDetail::MDetail(QString name, QString mettName, QString mettState, QString mettTime_s, QString mettTime_e, QWidget *parent) : QWidget(parent)
 {
       m_dockwidget = new QWidget(this);
       m_dockwidget->resize(180,60);
       this->appoinment_name = name;
       this->metting_name = mettName;
       this->metting_state = mettState;
-      this->metting_time = mettTime;
+      this->metting_time_s = mettTime_s;
+      this->metting_time_e = mettTime_e;
       this->resize(180,60);
 
       m_dockwidget->setStyleSheet("border-image:url(:/image/Image/back.png);border-radius:15px;");
@@ -28,6 +29,8 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
 
       QHBoxLayout* hbox2 = new QHBoxLayout();
       QLabel* mettNameLabel = new QLabel();
+
+
       mettNameLabel->setText(mettName);
       mettNameLabel->setFont(QFont("宋体",10));
       mettNameLabel->setStyleSheet("border-image:url();background-color: transparent;");
@@ -36,7 +39,13 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
 
       QHBoxLayout* hbox3 = new QHBoxLayout();
       QLabel* mettTimeLabel = new QLabel();
-      mettTimeLabel->setText(mettTime);
+
+      QStringList list_s = metting_time_s.split(" ");
+      QStringList list_e = metting_time_e.split(" ");
+      if(list_s.size()>1 && list_e.size()>1)
+      {
+          mettTimeLabel->setText(list_s[1] +"-"+list_e[1]);
+      }
       mettTimeLabel->setAlignment(Qt::AlignCenter);
       mettTimeLabel->setFont(QFont("宋体",11));
       mettTimeLabel->setStyleSheet("border-image:url();background-color: transparent;");
@@ -59,51 +68,38 @@ MDetail::MDetail(QString name,QString mettName,QString mettState,QString mettTim
 
 void MDetail::check_status()
 {
-    //"10:00  -  11:00"
-       QString data_str = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-       QStringList data_list = data_str.split(" ");
-       QString str_d = data_list[0];
+    QDateTime start = QDateTime::fromString(metting_time_s, "yyyy-MM-dd hh:mm:ss");
+    QDateTime end = QDateTime::fromString(metting_time_e, "yyyy-MM-dd hh:mm:ss");
+    uint stime = start.toTime_t();
+    uint etime = end.toTime_t();
+    uint ntime = QDateTime::currentDateTime().toTime_t();
+    //qDebug()<<"stime"<<start<<"end"<<end<<"now"<<QDateTime::currentDateTime();
+    //           qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
+    //           qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
+    //           qDebug()<<metting_name<<ntime - stime;
+    if((stime > ntime)||(etime > ntime))
+    {
+        if((stime - ntime  <= 2)||((stime < ntime)&&(etime>ntime)))//uint befor or going
+        {
+            state_label->setText("进行中");
+            state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
+            if(star_signal)
+            {
+                emit start_signal(appoinment_name,metting_name,end);
+                star_signal = false;
+            }
+        }
+    }
+    if(ntime > etime)
+    {
+        state_label->setText("已结束");
+        state_label->setStyleSheet("border-image:url();background-color:red;color:white;");
 
-       metting_time = metting_time.simplified();
-       QStringList list =metting_time.split("-");
-       if(list.size() > 1)
-       {
-           QString time_s = str_d + " "+list[0]+":00";
-           QString time_e = str_d + " "+list[1]+":00";
-           QDateTime start = QDateTime::fromString(time_s, "yyyy-MM-dd hh:mm:ss");
-           QDateTime end = QDateTime::fromString(time_e, "yyyy-MM-dd hh:mm:ss");
-           uint stime = start.toTime_t();
-           uint etime = end.toTime_t();
-           uint ntime = QDateTime::currentDateTime().toTime_t();
-           //qDebug()<<"stime"<<start<<"end"<<end<<"now"<<QDateTime::currentDateTime();
-//           qDebug()<<"stime"<<time_s<<"end"<<time_e<<"now"<<QDateTime::currentDateTime();
-//           qDebug()<<"stime"<<stime<<"end"<<etime<<"now"<<ntime;
-//           qDebug()<<metting_name<<ntime - stime;
-           if((stime > ntime)||(etime > ntime))
-           {
-               if((stime - ntime  <= 2)||((stime < ntime)&&(etime>ntime)))//uint befor or going
-               {
-                   state_label->setText("进行中");
-                   state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
-                   if(star_signal)
-                   {
-                       emit start_signal(appoinment_name,metting_name,end);
-                       star_signal = false;
-                   }
-               }
-           }
-           if(ntime > etime)
-           {
-               state_label->setText("已结束");
-               state_label->setStyleSheet("border-image:url();background-color:red;color:white;");
-
-           }
-           if(ntime < stime )
-           {
-               state_label->setText("已预约");
-               state_label->setStyleSheet("border-image:url();background-color:darkGray;color:white;");
-           }
-
-       }
+    }
+    if(ntime < stime )
+    {
+        state_label->setText("已预约");
+        state_label->setStyleSheet("border-image:url();background-color:darkGray;color:white;");
+    }
 }
 

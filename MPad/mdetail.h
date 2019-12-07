@@ -14,7 +14,7 @@ class MDetail : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MDetail(QString name,QString mettName,QString mettState,QString mettTime,QWidget *parent = 0);
+    explicit MDetail(QString name,QString mettName,QString mettState,QString mettTime_s,QString mettTime_e,QWidget *parent = 0);
 
 signals:
 
@@ -24,7 +24,8 @@ private:
     QString appoinment_name;
     QString metting_name;
     QString metting_state;
-    QString metting_time;
+    QString metting_time_s;
+    QString metting_time_e;
     QLabel* state_label;
     void check_status();
     QTimer* timer;

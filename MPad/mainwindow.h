@@ -64,6 +64,7 @@ private:
     void sendWebsocketMessage();
     void this_show();
     void showMettingFrom(QString appoinment_name,QString metting_name,QDateTime date_time_end);
+    QString createJsonStr();
     void btn_test();
     void test_json();
 public:
