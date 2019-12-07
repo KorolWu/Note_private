@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QVector>
+#include <jeson2object.h>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -73,6 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
      vbox->insertWidget(--count,mdetail4);
 
     connectToServer();
+
+    //json
+    test_json();
 }
 
 MainWindow::~MainWindow()
@@ -208,4 +212,12 @@ void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, 
 void MainWindow::btn_test()
 {
     onTextMessageReceived("---");
+}
+
+void MainWindow::test_json()
+{
+    Jeson2Object j;
+    //QString str =""
+
+    j.parseJsonFile("{ \"sites\": [ { \"name\":\"cainiao\" , \"url\":\"www.runoob.com\" }, {\"name\":\"google\" , \"url\":\"www.google.com \"}]}");
 }
