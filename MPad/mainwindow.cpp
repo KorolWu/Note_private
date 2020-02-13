@@ -39,10 +39,10 @@ MainWindow::MainWindow(QWidget *parent) :
     time_s_label->setStyleSheet("border-image:url();");
     time_s_label->move(160,240);
     time_s_label->resize(200,50);
-    QPushButton* btn = new QPushButton(Info_widget);
-    btn->move(160,300);
-    btn->setText("Test");
-    connect(btn,&QPushButton::clicked,this,&MainWindow::btn_test);
+//    QPushButton* btn = new QPushButton(Info_widget);
+//    btn->move(160,300);
+//    btn->setText("Test");
+//    connect(btn,&QPushButton::clicked,this,&MainWindow::btn_test);
 
     vbox = new QVBoxLayout();
     vbox->addStretch();
@@ -52,32 +52,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer,&QTimer::timeout,this,&MainWindow::updateTimeLabel);
     timer->start(1000);
 
-
-    mdetail = new MDetail("Korol","艾欧尼亚","即将开始","08:50-08:51","");
+    mdetail = new MDetail("空闲中","暂无预约","接收预约","08:50-08:51","");
     connect(mdetail,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-//    mdetail1 = new MDetail("Korol","德玛西亚","即将开始","09:07-09:08");
-//    connect(mdetail1,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
     int count = vbox->count();
-    qDebug()<<"count"<<count;
-    //vbox->insertWidget(--count,mdetail1);
     count = vbox->count();
     vbox->insertWidget(--count,mdetail);
-     count = vbox->count();
-//     mdetail2 = new MDetail("Korol","比尔吉沃特","即将开始","09:09-09:10");
-//     connect(mdetail2,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-//     vbox->insertWidget(--count,mdetail2);
-
-     mdetail3 = new MDetail("Korol","黑色玫瑰","即将开始","16:00-16:11","");
-     connect(mdetail3,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-     vbox->insertWidget(--count,mdetail3);
-     mdetail4 = new MDetail("Korol","教育专区","即将开始","16:19-16:21","");
-     connect(mdetail4,&MDetail::start_signal,this,&MainWindow::showMettingFrom);
-     vbox->insertWidget(--count,mdetail4);
 
     connectToServer();
+    p_resive_timer = new QTimer(this);
+    connect(p_resive_timer,&QTimer::timeout,this,&MainWindow::sendWebsocketMessage);
+    p_resive_timer->start(60000);
 
-    //json
-    test_json();
 }
 
 MainWindow::~MainWindow()
@@ -96,7 +81,7 @@ void MainWindow::updateTimeLabel()
 void MainWindow::getParameter()
 {
     My_Config myconfig ;
-    myconfig.Config("/root/2019/git_note/Note_private/config.ini");
+    myconfig.Config("/config.ini");
 //    qDebug()<<"ip:  "<<myconfig.Get("socket","ip").toString();
 //    qDebug()<<"port:  "<<myconfig.Get("socket","port").toInt();
 //    qDebug()<<"url:  "<<myconfig.Get("http","url").toString();
@@ -118,10 +103,14 @@ void MainWindow::onConnected()
     connect(&m_webSocket, &QWebSocket::textMessageReceived,
             this, &MainWindow::onTextMessageReceived);
     is_alive = true;
+    qDebug()<<"链接成功";
+    sendWebsocketMessage();
 }
 
 void MainWindow::onTextMessageReceived(QString message)
 {
+
+    qDebug()<<"收到的数据 "<<message.toLocal8Bit();
     m_detail_map.clear();
      Jeson2Object j(message,m_detail_map);
     //clear vbox widget
@@ -179,7 +168,7 @@ void MainWindow::onTextMessageReceived(QString message)
     }
     //3 time clear
 
-//    qDebug()<<message;
+
      /**
     **/
 }
@@ -191,7 +180,9 @@ void MainWindow::webSocketDisconnect()
 
 void MainWindow::sendWebsocketMessage()
 {
-    m_webSocket.sendTextMessage(m_metting_room);
+    QString sendMessage = createJsonStr();
+    qDebug()<<"sendmessage->"<<sendMessage;
+    m_webSocket.sendTextMessage(sendMessage); //"{\"Office_Reservation_search\":[\"场景1\"]}"
 }
 
 void MainWindow::this_show()
@@ -212,7 +203,7 @@ QString MainWindow::createJsonStr()
 {
     QVariantHash data;
     QJsonArray array1;
-    array1.insert(0, m_metting_room);
+    array1.insert(0, "场景1");
     data.insert("Office_Reservation_search",array1);
     QJsonObject rootObj = QJsonObject::fromVariantHash(data);
     QJsonDocument document;
@@ -222,18 +213,17 @@ QString MainWindow::createJsonStr()
     QString json_str(byte_array);
     qDebug()<<json_str;
     return json_str;
-
 }
+
 
 void MainWindow::btn_test()
 {
-    QString str ="{\"code\":0,\"msg\":\"查找完成\",\"data\":{\"terminal1\":[{\"OrderNum\":\"191011090412104\",\"WorkerNumber\":\"CWA666\","
-                 "\"StartTime\":\"2019-12-07 16:50:00\",\"EndTime\":\"2019-12-07 16:51:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA732\","
-                                                      "\"StartTime\":\"2019-12-07 16:52:00\",\"EndTime\":\"2019-12-07 16:53:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA02\","
-                 "\"StartTime\":\"2019-12-07 16:48:00\",\"EndTime\":\"2019-12-07 16:49:00\"}]}}";
-    onTextMessageReceived(str);
-
-    createJsonStr();
+//    QString str ="{\"code\":0,\"msg\":\"查找完成\",\"data\":{\"terminal1\":[{\"OrderNum\":\"191011090412104\",\"WorkerNumber\":\"CWA666\","
+//                 "\"StartTime\":\"2020-02-10 16:50:00\",\"EndTime\":\"2020-02-10 16:51:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA732\","
+//                                                      "\"StartTime\":\"2020-02-10 16:52:00\",\"EndTime\":\"2020-02-10 16:53:00\"},{\"OrderNum\":\"191011090412105\",\"WorkerNumber\":\"CWA02\","
+//                 "\"StartTime\":\"2020-02-10 16:48:00\",\"EndTime\":\"2020-02-10 16:49:00\"}]}}";
+//    onTextMessageReceived(str);
+    sendWebsocketMessage();
 }
 
 void MainWindow::test_json()
@@ -245,3 +235,4 @@ void MainWindow::test_json()
 //    Jeson2Object j(str,m_detail_map);
     qDebug()<<m_detail_map;
 }
+

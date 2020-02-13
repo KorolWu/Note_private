@@ -39,6 +39,7 @@ private:
     QLabel* time_d_label;
     QLabel* time_s_label;
     QTimer* timer;
+    QTimer* p_resive_timer;
 
     QWebSocket m_webSocket;
     QString m_url;
@@ -50,9 +51,9 @@ private:
     //test
     MDetail* mdetail ;
     MDetail* mdetail1 ;
-    MDetail* mdetail2 ;
-    MDetail* mdetail3 ;
-    MDetail* mdetail4 ;
+//    MDetail* mdetail2 ;
+//    MDetail* mdetail3 ;
+//    MDetail* mdetail4 ;
     //test
 private:
     void updateTimeLabel();

@@ -2,6 +2,8 @@
 #define MYCONFIG_H
 #include <QSettings>
 #include <QStandardPaths>
+#include<QDebug>
+#include <QApplication>
 class My_Config
 {
 private:
@@ -25,7 +27,8 @@ public:
 //           }
 //           else
 //           {
-               m_qstrFileName = qstrfilename;
+              // m_qstrFileName = qstrfilename;
+          m_qstrFileName = QCoreApplication::applicationDirPath() + "/Config.ini";
 //           }
 
            m_psetting = new QSettings(m_qstrFileName, QSettings::IniFormat);

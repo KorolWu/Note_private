@@ -30,7 +30,7 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
     topic_lab->move(180,180);
 
     QLabel* lab = new QLabel(this);
-    lab->setText("           会议进行中 ...         ");
+    lab->setText("    会议进行中 ...");
     QFont font_lab("黑体",25);
     lab->setAlignment(Qt::AlignCenter);
     lab->setFont(font_lab);

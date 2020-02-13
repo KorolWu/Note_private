@@ -33,12 +33,12 @@ void Jeson2Object::parseJsonFile(const QString &json_str)
     }
     QJsonValue jsonValue = rootObject.value("data");
     QJsonObject obj = jsonValue.toObject();
-    if(!obj.keys().contains("terminal1"))//variable
+    if(!obj.keys().contains("场景1"))//variable
     {
         qDebug() << "No target value -- terminal1";
         return;
     }
-    jsonValue = obj.value("terminal1");
+    jsonValue = obj.value("场景1");
     if(!jsonValue.isArray())
     {
         qDebug() << "No target array";
@@ -55,6 +55,7 @@ void Jeson2Object::parseJsonObject(QJsonArray::const_iterator iter) {
     //QString mettState ="";
     QString mettTime_e = "";
     QString mettTime_s ="";
+    QString topic ="";
     if(jsonObject.keys().contains("WorkerNumber"))
     {
         name = jsonObject.value("WorkerNumber").toString();
@@ -67,9 +68,13 @@ void Jeson2Object::parseJsonObject(QJsonArray::const_iterator iter) {
     {
        mettTime_e = jsonObject.value("EndTime").toString();
     }
+    if(jsonObject.keys().contains("topic"))
+    {
+        topic = jsonObject.value("topic").toString();
+    }
     QDateTime start_time = QDateTime::fromString(mettTime_s, "yyyy-MM-dd hh:mm:ss");
     uint int_start_time = start_time.toTime_t();
-    MDetail *ob = new MDetail(name,"Project Analysis","",mettTime_s,mettTime_e);
+    MDetail *ob = new MDetail(name,topic,"",mettTime_s,mettTime_e);
     m_Object_map.insert(int_start_time,ob);
 
 }
