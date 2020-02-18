@@ -40,3 +40,6 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     resouce.qrc
+RC_FILE += AppIcon.rc
+
+OTHER_FILES += AppIcon.rc

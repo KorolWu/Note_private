@@ -3,5 +3,7 @@
         <file>Image/back.png</file>
         <file>Image/infobackimage.png</file>
         <file>Image/log.png</file>
+        <file>Image/metting.png</file>
+        <file>Image/metting_ico.ico</file>
     </qresource>
 </RCC>

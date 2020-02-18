@@ -9,7 +9,8 @@
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QTimer>
-
+#include <QApplication>
+#include <QDesktopWidget>
 class MettingFrom : public QWidget
 {
     Q_OBJECT
@@ -20,8 +21,11 @@ signals:
     void weakup_mainwindow();
 public slots:
 private:
-    const int PAD_X = 640;
-    const int PAD_Y = 420;
+//    const int PAD_X = 640;
+//    const int PAD_Y = 420;
+     int PAD_X;
+     int PAD_Y;
+    QRect desktop;
     QLabel* log_lab;
     QLabel* appoinment_name_lab;
     QLabel* topic_lab;

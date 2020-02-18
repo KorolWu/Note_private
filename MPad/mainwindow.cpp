@@ -7,38 +7,43 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    desktop =  QApplication::desktop()->availableGeometry();
+    qDebug()<<"x "<<desktop.width();
+    qDebug()<<"y"<<desktop.height();
+    PAD_X = desktop.width();
+    PAD_Y = desktop.height();
     ui->setupUi(this);
     this->resize(PAD_X,PAD_Y);
-    this->move(700,300);
+    //this->move(700,300);
     getParameter();
     State_widget = new QScrollArea(this);
     QWidget* widget_containt = new QWidget();
-    widget_containt->resize(160,PAD_Y);
+    widget_containt->resize(PAD_X/3,PAD_Y);
     State_widget->setWidget(widget_containt);
     State_widget->setWidgetResizable(true);
-    State_widget->resize(200,PAD_Y);
+    State_widget->resize(PAD_X/5,PAD_Y);
     State_widget->setWindowOpacity(0.5);
     State_widget->setStyleSheet("background-color:rgb(213, 213, 213);border-radius:15px;");//213, 213, 213,153, 153, 153
 
     Info_widget = new QWidget(this);
-    Info_widget->resize(PAD_X-204,PAD_Y);
+    Info_widget->resize(PAD_X/5*4,PAD_Y);
     Info_widget->setStyleSheet("border-image:url(:/image/Image/infobackimage.png);border-radius:15px;");
-    Info_widget->move(204,0);
+    Info_widget->move(PAD_X/5,0);
     QLabel *mettName = new QLabel(Info_widget);
     mettName->setText(m_metting_room);
     mettName->setFont(QFont("宋体",38));
     mettName->setStyleSheet("border-image:url();");
-    mettName->move(160,120);
+    mettName->move(Info_widget->width()/2-80,Info_widget->height()/2-200);
     time_d_label = new QLabel(Info_widget);
     time_d_label->setFont(QFont("微软雅黑",20));
     time_d_label->setStyleSheet("border-image:url();");
-    time_d_label->resize(200,50);
-    time_d_label->move(150,200);
+    time_d_label->resize(400,50);
+    time_d_label->move(Info_widget->width()/2-100,Info_widget->height()/2);
     time_s_label = new QLabel(Info_widget);
     time_s_label->setFont(QFont("微软雅黑",20));
     time_s_label->setStyleSheet("border-image:url();");
-    time_s_label->move(160,240);
-    time_s_label->resize(200,50);
+    time_s_label->move(Info_widget->width()/2-80,Info_widget->height()/2-80);
+    time_s_label->resize(400,50);
 //    QPushButton* btn = new QPushButton(Info_widget);
 //    btn->move(160,300);
 //    btn->setText("Test");
@@ -62,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
     p_resive_timer = new QTimer(this);
     connect(p_resive_timer,&QTimer::timeout,this,&MainWindow::sendWebsocketMessage);
     p_resive_timer->start(60000);
+
+//    onTextMessageReceived("");
 
 }
 
@@ -111,6 +118,7 @@ void MainWindow::onTextMessageReceived(QString message)
 {
 
     qDebug()<<"收到的数据 "<<message.toLocal8Bit();
+     message = "{\"code\": 0, \"msg\": \"\\u67e5\\u627e\\u5b8c\\u6210\", \"data\": {\"\\u573a\\u666f1\": [{\"OrderNum\": \"191011090412100\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 11:12:00\", \"EndTime\": \"2020-02-12 12:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u697c\\u5b87\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412102\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 13:12:00\", \"EndTime\": \"2020-02-12 14:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u8f66\\u5e93\"}, {\"OrderNum\": \"191011090412103\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-18 13:12:00\", \"EndTime\": \"2020-02-18 14:25:00\", \"state\": \"delete\", \"topic\": \"\\u601d\\u777f\\u8d2f\\u901a\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412105\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 19:12:00\", \"EndTime\": \"2020-02-12 20:14:00\", \"state\": \"delete\", \"topic\": \"\\u6606\\u5c71\\u5de5\\u5382\\u9879\\u76ee\"}]}}";
     m_detail_map.clear();
      Jeson2Object j(message,m_detail_map);
     //clear vbox widget

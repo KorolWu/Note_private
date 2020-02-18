@@ -17,6 +17,8 @@
 #include <QJsonDocument>
 #include <QtWebSockets/QWebSocket>
 #include <QScrollArea>
+#include <QApplication>
+#include <QDesktopWidget>
 namespace Ui {
 class MainWindow;
 }
@@ -31,8 +33,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    const int PAD_X = 640;
-    const int PAD_Y = 420;
+//    const int PAD_X = 640;
+//    const int PAD_Y = 420;
+    int PAD_X;
+    int PAD_Y;
     //MDetail* mdetail;
     QScrollArea* State_widget;
     QWidget* Info_widget;
@@ -54,6 +58,7 @@ private:
 //    MDetail* mdetail2 ;
 //    MDetail* mdetail3 ;
 //    MDetail* mdetail4 ;
+    QRect desktop;
     //test
 private:
     void updateTimeLabel();
