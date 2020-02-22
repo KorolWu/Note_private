@@ -14,7 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     PAD_Y = desktop.height();
     ui->setupUi(this);
     this->resize(PAD_X,PAD_Y);
+    this->setWindowTitle("Intelligent Meeting");
+    this->setWindowFlag(Qt::FramelessWindowHint);
     //this->move(700,300);
+    metting = nullptr;
     getParameter();
     State_widget = new QScrollArea(this);
     QWidget* widget_containt = new QWidget();
@@ -118,7 +121,13 @@ void MainWindow::onTextMessageReceived(QString message)
 {
 
     qDebug()<<"收到的数据 "<<message.toLocal8Bit();
-     message = "{\"code\": 0, \"msg\": \"\\u67e5\\u627e\\u5b8c\\u6210\", \"data\": {\"\\u573a\\u666f1\": [{\"OrderNum\": \"191011090412100\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 11:12:00\", \"EndTime\": \"2020-02-12 12:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u697c\\u5b87\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412102\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 13:12:00\", \"EndTime\": \"2020-02-12 14:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u8f66\\u5e93\"}, {\"OrderNum\": \"191011090412103\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-18 13:12:00\", \"EndTime\": \"2020-02-18 14:25:00\", \"state\": \"delete\", \"topic\": \"\\u601d\\u777f\\u8d2f\\u901a\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412105\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 19:12:00\", \"EndTime\": \"2020-02-12 20:14:00\", \"state\": \"delete\", \"topic\": \"\\u6606\\u5c71\\u5de5\\u5382\\u9879\\u76ee\"}]}}";
+     //message = "{\"code\": 0, \"msg\": \"\\u67e5\\u627e\\u5b8c\\u6210\", \"data\": {\"\\u573a\\u666f1\": [{\"OrderNum\": \"191011090412100\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 11:12:00\", \"EndTime\": \"2020-02-12 12:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u697c\\u5b87\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412102\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 13:12:00\", \"EndTime\": \"2020-02-12 14:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u8f66\\u5e93\"}, {\"OrderNum\": \"191011090412103\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-18 13:12:00\", \"EndTime\": \"2020-02-18 14:25:00\", \"state\": \"delete\", \"topic\": \"\\u601d\\u777f\\u8d2f\\u901a\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412105\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 19:12:00\", \"EndTime\": \"2020-02-12 20:14:00\", \"state\": \"delete\", \"topic\": \"\\u6606\\u5c71\\u5de5\\u5382\\u9879\\u76ee\"}]}}";
+    for(auto it = m_detail_map.begin();it != m_detail_map.end();it++)
+    {
+        disconnect(it.value(),&MDetail::start_signal,this,&MainWindow::showMettingFrom);
+        it.value()->deleteLater();
+        it.value() = nullptr;
+    }
     m_detail_map.clear();
      Jeson2Object j(message,m_detail_map);
     //clear vbox widget
@@ -188,19 +197,25 @@ void MainWindow::webSocketDisconnect()
 
 void MainWindow::sendWebsocketMessage()
 {
-    QString sendMessage = createJsonStr();
-    qDebug()<<"sendmessage->"<<sendMessage;
-    m_webSocket.sendTextMessage(sendMessage); //"{\"Office_Reservation_search\":[\"场景1\"]}"
+    if(metting == nullptr)
+    {
+        QString sendMessage = createJsonStr();
+        qDebug()<<"sendmessage->"<<sendMessage;
+        m_webSocket.sendTextMessage(sendMessage); //"{\"Office_Reservation_search\":[\"场景1\"]}"
+    }
 }
 
 void MainWindow::this_show()
 {
     this->show();
+    metting->close();
+    metting->deleteLater();
+    metting = nullptr;
 }
 
 void MainWindow::showMettingFrom(QString appoinment_name, QString metting_name, QDateTime date_time_end)
 {
-    MettingFrom* metting = new MettingFrom(appoinment_name,metting_name,date_time_end);
+    metting = new MettingFrom(appoinment_name,metting_name,date_time_end);
     connect(metting,&MettingFrom::weakup_mainwindow,this,&MainWindow::this_show);
     this->hide();
     metting->show();

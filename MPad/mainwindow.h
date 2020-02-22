@@ -44,6 +44,7 @@ private:
     QLabel* time_s_label;
     QTimer* timer;
     QTimer* p_resive_timer;
+    MettingFrom* metting;
 
     QWebSocket m_webSocket;
     QString m_url;

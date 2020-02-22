@@ -82,7 +82,7 @@ void MDetail::check_status()
         if((stime - ntime  <= 2)||((stime < ntime)&&(etime>ntime)))//uint befor or going
         {
             state_label->setText("进行中");
-            state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
+            state_label->setStyleSheet("border-image:url();background-color:yellow;color:white;");
             if(star_signal)
             {
                 emit start_signal(appoinment_name,metting_name,end);
@@ -99,7 +99,7 @@ void MDetail::check_status()
     if(ntime < stime )
     {
         state_label->setText("已预约");
-        state_label->setStyleSheet("border-image:url();background-color:darkGray;color:white;");
+        state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
     }
 }
 

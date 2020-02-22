@@ -11,6 +11,8 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
     this->resize(PAD_X,PAD_Y);
     this->move(0,0);
     this->setStyleSheet("background-color:rgb(233, 233, 233);");
+    this->setWindowTitle("In The Meeting");
+    this->setWindowFlag(Qt::FramelessWindowHint);
     log_lab = new QLabel(this);
     //log_lab->resize(60,30);
     QPixmap pixmap(":/image/Image/log.png");
@@ -20,19 +22,19 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
 
     QFont font("方正舒体",35);
     appoinment_name_lab = new QLabel(this);
-    appoinment_name_lab->resize(300,70);
+    appoinment_name_lab->resize(500,70);
     appoinment_name_lab->setAlignment(Qt::AlignCenter);
     appoinment_name_lab->setFont(font);
     appoinment_name_lab->setText(appoinment_name);
-    appoinment_name_lab->move(PAD_X/2-100,PAD_Y/19*5);
+    appoinment_name_lab->move(PAD_X/2-150,PAD_Y/19*5);
 
     topic_lab = new QLabel(this);
-    topic_lab->resize(300,70);
+    topic_lab->resize(500,70);
     topic_lab->setAlignment(Qt::AlignCenter);
     QFont font_topic("宋体",28);
     topic_lab->setText(topic_name);
     topic_lab->setFont(font_topic);
-    topic_lab->move(PAD_X/2-100,PAD_Y/19*7);
+    topic_lab->move(PAD_X/2-150,PAD_Y/19*7);
 
     QLabel* lab = new QLabel(this);
     lab->setText("    会议进行中 ...");
@@ -44,10 +46,10 @@ MettingFrom::MettingFrom(QString appoinment_name, QString topic_name, QDateTime 
     time_d_label = new QLabel(this);
     time_d_label->move(PAD_X/17*14,20);
     time_d_label->setFont(QFont("宋体",20));
-    time_d_label->resize(300,50);
+    time_d_label->resize(310,55);
     time_s_label = new QLabel(this);
-    time_s_label->move(PAD_X/17*14,60);
-    time_s_label->resize(300,50);
+    time_s_label->move(PAD_X/17*14,80);
+    time_s_label->resize(310,55);
     time_s_label->setFont(QFont("宋体",20));
 
     timer = new QTimer(this);
@@ -74,8 +76,9 @@ void MettingFrom::update_time()
     if(now >= m_end)
     {
         weakup_mainwindow();
-        //this->hide();
+        this->hide();
         this->close();
         this->deleteLater();
+
     }
 }
