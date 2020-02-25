@@ -98,7 +98,10 @@ void MDetail::check_status()
     }
     if(ntime < stime )
     {
-        state_label->setText("已预约");
+        if( metting_name == "暂无预约")
+            state_label->setText("无预约");
+        else
+            state_label->setText("已预约");
         state_label->setStyleSheet("border-image:url();background-color:green;color:white;");
     }
 }

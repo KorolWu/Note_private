@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connectToServer();
     p_resive_timer = new QTimer(this);
     connect(p_resive_timer,&QTimer::timeout,this,&MainWindow::sendWebsocketMessage);
-    p_resive_timer->start(60000);
+    p_resive_timer->start(6000);
 
 //    onTextMessageReceived("");
 
@@ -86,6 +86,11 @@ void MainWindow::updateTimeLabel()
     QStringList list = str.split(" ");
     time_d_label->setText(list[0]);
     time_s_label->setText(list[1]);
+    if(is_alive == true && one_flag == false)
+    {
+        sendWebsocketMessage();
+        one_flag = true;
+    }
 }
 
 void MainWindow::getParameter()
@@ -114,13 +119,15 @@ void MainWindow::onConnected()
             this, &MainWindow::onTextMessageReceived);
     is_alive = true;
     qDebug()<<"链接成功";
-    sendWebsocketMessage();
+    //sendWebsocketMessage();
 }
 
 void MainWindow::onTextMessageReceived(QString message)
 {
 
     qDebug()<<"收到的数据 "<<message.toLocal8Bit();
+    if(message == m_resiveStr)
+        return;
      //message = "{\"code\": 0, \"msg\": \"\\u67e5\\u627e\\u5b8c\\u6210\", \"data\": {\"\\u573a\\u666f1\": [{\"OrderNum\": \"191011090412100\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 11:12:00\", \"EndTime\": \"2020-02-12 12:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u697c\\u5b87\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412102\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 13:12:00\", \"EndTime\": \"2020-02-12 14:14:00\", \"state\": \"delete\", \"topic\": \"\\u667a\\u6167\\u8f66\\u5e93\"}, {\"OrderNum\": \"191011090412103\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-18 13:12:00\", \"EndTime\": \"2020-02-18 14:25:00\", \"state\": \"delete\", \"topic\": \"\\u601d\\u777f\\u8d2f\\u901a\\u9879\\u76ee\"}, {\"OrderNum\": \"191011090412105\", \"WorkerNumber\": \"CWA732\", \"StartTime\": \"2020-02-12 19:12:00\", \"EndTime\": \"2020-02-12 20:14:00\", \"state\": \"delete\", \"topic\": \"\\u6606\\u5c71\\u5de5\\u5382\\u9879\\u76ee\"}]}}";
     for(auto it = m_detail_map.begin();it != m_detail_map.end();it++)
     {
@@ -148,8 +155,9 @@ void MainWindow::onTextMessageReceived(QString message)
         QString start_str = "";
         QDateTime start_time =  QDateTime::fromString(start_str, "yyyy-MM-dd hh:mm:ss");
         uint start_int = start_time.toTime_t();
-        MDetail* detail = new MDetail(""," 空闲中 ","","","");
+        MDetail* detail = new MDetail(""," 空闲中 ","","s","");
         m_detail_map.insert(start_int,detail);
+         m_resiveStr = message;
         return;
     }
 
@@ -184,7 +192,7 @@ void MainWindow::onTextMessageReceived(QString message)
         vbox->insertWidget(--dex,m_detail_map[key]);
     }
     //3 time clear
-
+    m_resiveStr = message;
 
      /**
     **/
@@ -193,10 +201,16 @@ void MainWindow::onTextMessageReceived(QString message)
 void MainWindow::webSocketDisconnect()
 {
     is_alive = false;
+    qDebug()<<"disconnect form service";
 }
 
 void MainWindow::sendWebsocketMessage()
 {
+    if(is_alive == false)
+    {
+        connectToServer();
+        return;
+    }
     if(metting == nullptr)
     {
         QString sendMessage = createJsonStr();
@@ -226,7 +240,7 @@ QString MainWindow::createJsonStr()
 {
     QVariantHash data;
     QJsonArray array1;
-    array1.insert(0, "场景1");
+    array1.insert(0,m_metting_room);
     data.insert("Office_Reservation_search",array1);
     QJsonObject rootObj = QJsonObject::fromVariantHash(data);
     QJsonDocument document;
