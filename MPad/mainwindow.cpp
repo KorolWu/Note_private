@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowFlag(Qt::FramelessWindowHint);
     //this->move(700,300);
     metting = nullptr;
+    m_updateTime = 6000;
     getParameter();
     State_widget = new QScrollArea(this);
     QWidget* widget_containt = new QWidget();
@@ -47,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent) :
     time_s_label->setStyleSheet("border-image:url();");
     time_s_label->move(Info_widget->width()/2-80,Info_widget->height()/2-80);
     time_s_label->resize(400,50);
+    m_pStatusLab = new QLabel(Info_widget);
+    m_pStatusLab->resize(16,16);
+    m_pStatusLab->move(PAD_X*0.744,PAD_Y*0.93);
+    m_pStatusLab->setStyleSheet("border-image:url();");
 //    QPushButton* btn = new QPushButton(Info_widget);
 //    btn->move(160,300);
 //    btn->setText("Test");
@@ -69,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connectToServer();
     p_resive_timer = new QTimer(this);
     connect(p_resive_timer,&QTimer::timeout,this,&MainWindow::sendWebsocketMessage);
-    p_resive_timer->start(6000);
+    p_resive_timer->start(m_updateTime);
 
 //    onTextMessageReceived("");
 
@@ -91,6 +96,12 @@ void MainWindow::updateTimeLabel()
         sendWebsocketMessage();
         one_flag = true;
     }
+    if(is_alive)
+    {
+        m_pStatusLab->setStyleSheet("background-color:green;border-radius:8px;border-image:url();");
+    }
+    else
+        m_pStatusLab->setStyleSheet("background-color:red;border-radius:8px;border-image:url();");
 }
 
 void MainWindow::getParameter()
@@ -100,10 +111,11 @@ void MainWindow::getParameter()
 //    qDebug()<<"ip:  "<<myconfig.Get("socket","ip").toString();
 //    qDebug()<<"port:  "<<myconfig.Get("socket","port").toInt();
 //    qDebug()<<"url:  "<<myconfig.Get("http","url").toString();
-//    qDebug()<<"path:  "<<myconfig.Get("metting","room_name").toString();
+    qDebug()<<"update_time:  "<<myconfig.Get("metting","update_time").toInt();
 
      m_url = myconfig.Get("http","url").toString();
      m_metting_room = myconfig.Get("metting","room_name").toString();
+     m_updateTime = myconfig.Get("metting","update_time").toInt();
 }
 
 void MainWindow::connectToServer()
@@ -136,7 +148,7 @@ void MainWindow::onTextMessageReceived(QString message)
         it.value() = nullptr;
     }
     m_detail_map.clear();
-     Jeson2Object j(message,m_detail_map);
+     Jeson2Object j(message,m_detail_map,m_metting_room);
     //clear vbox widget
     QLayoutItem *child;
     while((child = vbox->takeAt(0)) != 0)

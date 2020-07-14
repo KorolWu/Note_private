@@ -5,8 +5,9 @@ Jeson2Object::Jeson2Object()
 
 }
 
-Jeson2Object::Jeson2Object(QString str,QMap<uint, MDetail *> &map)
+Jeson2Object::Jeson2Object(QString str,QMap<uint, MDetail *> &map,QString mettName)
 {
+   this->m_mettName = mettName;
    parseJsonFile(str);
    map = m_Object_map;
 }
@@ -33,12 +34,12 @@ void Jeson2Object::parseJsonFile(const QString &json_str)
     }
     QJsonValue jsonValue = rootObject.value("data");
     QJsonObject obj = jsonValue.toObject();
-    if(!obj.keys().contains("场景1"))//variable
+    if(!obj.keys().contains(m_mettName))//variable
     {
         qDebug() << "No target value -- terminal1";
         return;
     }
-    jsonValue = obj.value("场景1");
+    jsonValue = obj.value(m_mettName);
     if(!jsonValue.isArray())
     {
         qDebug() << "No target array";

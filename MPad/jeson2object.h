@@ -9,7 +9,7 @@ class Jeson2Object
 {
 public:
     Jeson2Object();
-    Jeson2Object(QString str,QMap<uint, MDetail *> &map);
+    Jeson2Object(QString str, QMap<uint, MDetail *> &map, QString mettName);
     void parseJsonFile(const QString &fileName);
     void parseJsonObject(QJsonArray::const_iterator iter);
     void parseJsonObjectI(QJsonObject &object);
@@ -19,6 +19,7 @@ public:
     QList<QString> m_vList;
 
     QMap<uint, MDetail *> m_Object_map;
+    QString m_mettName;
 
 };
 

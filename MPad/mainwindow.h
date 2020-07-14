@@ -37,11 +37,13 @@ private:
 //    const int PAD_Y = 420;
     int PAD_X;
     int PAD_Y;
+    int m_updateTime;
     //MDetail* mdetail;
     QScrollArea* State_widget;
     QWidget* Info_widget;
     QLabel* time_d_label;
     QLabel* time_s_label;
+    QLabel* m_pStatusLab;
     QTimer* timer;
     QTimer* p_resive_timer;
     MettingFrom* metting;
